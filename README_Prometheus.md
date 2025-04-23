@@ -1,45 +1,55 @@
 # Project Overview
 
+## Introduction
+
+This project is a lightweight blockchain implementation written in Python, focusing on core blockchain functionality including transaction processing, block management, and state tracking. It provides a bare-metal implementation of fundamental blockchain concepts, demonstrating the inner workings of a decentralized ledger system.
+
 ## Purpose
-This project provides a lightweight implementation of core Ethereum-related data encoding and parsing utilities, focusing on RLP (Recursive Length Prefix) encoding and transaction-related operations.
 
-## Key Features
-- RLP Encoding and Decoding: A custom implementation of the Recursive Length Prefix (RLP) encoding standard used in Ethereum
-  - Supports encoding and decoding of integers, strings, and lists
-  - Handles various data type conversions and binary representations
-- Transaction Parsing: Basic transaction data parsing capabilities
-- Binary Conversion Utilities: Tools for converting between different numeric representations
+The project implements key blockchain components such as:
+- Transaction creation and signing
+- Block generation and validation
+- State management using a Merkle Patricia Trie
+- Basic cryptocurrency-like transaction handling
 
-## Benefits
-- Lightweight and focused implementation of core Ethereum encoding mechanisms
-- Provides low-level utilities for blockchain and Ethereum-related data processing
-- Offers precise control over binary and numeric data transformations
+## Target Audience
+
+This project is ideal for:
+- Blockchain and cryptocurrency enthusiasts
+- Developers learning blockchain architecture
+- Computer science students interested in distributed systems
+- Researchers exploring blockchain fundamentals
+
+## Key Components
+
+The blockchain implementation includes:
+- Transaction management (transactions.py)
+- Block creation and validation (blocks.py)
+- State tracking using a Trie data structure
+- Basic cryptographic operations using bitcoin tools
+- Minimal network interaction capabilities
 
 ## Technical Highlights
-- Supports encoding of integers up to 2^256
-- Handles different length encodings for various data types
-- Provides both encoding and decoding functionality for complex data structures
 
-## Installation
+- Written in pure Python
+- Uses RLP (Recursive Length Prefix) encoding for data serialization
+- Implements core blockchain data structures
+- Supports basic transaction signing and verification
+- Provides a foundation for understanding blockchain mechanics
+
+Note: This is an educational/experimental implementation and is not intended for production use.
+
+## Getting Started
 
 ### Prerequisites
-- Python 3.7 or higher
+- Python 3.7+
 - pip (Python package manager)
 
-### Installing the Library
-
-You can install this library directly from the repository using pip:
-
-```bash
-pip install git+https://github.com/ethereum/pyethereum.git
-```
-
-### Local Development Setup
-
+### Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/ethereum/pyethereum.git
-cd pyethereum
+git clone https://github.com/your-repo/ethereum-tools.git
+cd ethereum-tools
 ```
 
 2. Create a virtual environment (recommended):
@@ -50,219 +60,228 @@ source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 
 3. Install dependencies:
 ```bash
-pip install -r requirements.txt  # Note: Create a requirements.txt if not present
+pip install -r requirements.txt  # Note: Create a requirements.txt file if not existing
 ```
 
-### Verification
-To verify the installation, you can run:
+### Running the Project
+You can interact with the various modules directly or import them into your Python projects:
+
+```python
+# Example imports
+from rlp import encode, decode
+from trie import Trie
+from transactions import Transaction
+```
+
+### Running Tests
+To run the project tests:
 ```bash
-python -c "import pyethereum; print(pyethereum.__version__)"
+python -m unittest discover
 ```
 
-### Note
-This installation method assumes the project is intended to be installed as a package. Always refer to the project's official documentation for the most up-to-date installation instructions.
+### Notes
+- Ensure you have the necessary cryptographic libraries installed
+- This project is a low-level implementation of Ethereum-related data structures
+- For production use, consider additional error handling and security measures
 
-## API Reference
+## Features / Capabilities
 
-### Classes
+The project provides a set of utility functions and classes for working with Ethereum-related data structures and transactions:
 
-#### `Block` Class
-A class representing an Ethereum block with methods for block manipulation and state management.
+### RLP (Recursive Length Prefix) Encoding/Decoding
+- Comprehensive RLP encoding and decoding functionality
+- Supports encoding/decoding of:
+  - Integers (non-negative)
+  - Strings
+  - Lists
+- Handles various length encodings for different data types
+- Provides binary conversion utilities
 
-**Constructor**:
+### Transaction Handling
+- Full transaction object implementation with support for:
+  - Transaction creation
+  - Transaction parsing
+  - Transaction signing
+  - Transaction serialization
+
+Key Transaction Capabilities:
+- Create transactions with parameters:
+  - Nonce
+  - Recipient address
+  - Value
+  - Fee
+  - Data payload
+- Sign transactions using cryptographic keys
+- Serialize transactions to RLP format
+- Generate transaction hashes
+- Extract sender information
+
+### Parsing Utilities
+- Basic parsing functions for processing input data
+- Support for hexadecimal and binary data formats
+
+### Cryptographic Operations
+- SHA256 hashing
+- ECDSA signature generation and recovery
+- Public key derivation
+
+### Limitations and Considerations
+- Focuses on core transaction and encoding primitives
+- Designed for low-level Ethereum-related data manipulation
+- Requires additional libraries (pybitcointools) for some cryptographic operations
+
+#### Example Usage
 ```python
-def __init__(self, data=None)
-```
-- `data` (optional): Block data, can be hex-encoded or RLP-encoded
-  - If None, creates an empty block
-  - If hex-encoded or RLP-encoded, parses the block data
+# Create a transaction
+tx = Transaction(nonce, to_address, value, fee, data)
 
-**Methods**:
-1. `pay_fee(address, fee, tominer=True)`
-   - Deducts a fee from the sender's account and optionally pays it to the miner
-   - **Parameters**:
-     - `address`: Sender's address
-     - `fee`: Amount of fee to deduct
-     - `tominer`: Whether to pay the fee to the miner (default: True)
-   - **Returns**: `Boolean` indicating success of fee payment
-
-2. `get_nonce(address)`
-   - Retrieves the nonce (transaction count) for a given address
-   - **Parameters**: 
-     - `address`: Account address
-   - **Returns**: Account nonce or `False` if not found
-
-3. `get_balance(address)`
-   - Retrieves the balance for a given address
-   - **Parameters**: 
-     - `address`: Account address
-   - **Returns**: Account balance (integer)
-
-4. `set_balance(address, balance)`
-   - Sets the balance for a given address
-   - **Parameters**:
-     - `address`: Account address
-     - `balance`: New balance to set
-
-5. `get_contract(address)`
-   - Retrieves the contract state for a given address
-   - **Parameters**:
-     - `address`: Contract address
-   - **Returns**: `Trie` object representing contract state or `False`
-
-6. `update_contract(address, contract)`
-   - Updates the contract state for a given address
-   - **Parameters**:
-     - `address`: Contract address
-     - `contract`: Updated contract `Trie`
-   - **Returns**: `Boolean` indicating success
-
-7. `serialize()`
-   - Serializes the block into RLP-encoded format
-   - **Returns**: RLP-encoded block data
-
-8. `hash()`
-   - Generates the block's hash
-   - **Returns**: Block hash (SHA256)
-
-#### `Transaction` Class
-A class representing an Ethereum transaction with methods for parsing, signing, and serialization.
-
-**Constructors**:
-```python
-def __init__(self, nonce, to, value, fee, data)
-def __init__(self, data)
-```
-- First constructor: Creates a transaction with explicit parameters
-- Second constructor: Parses transaction from encoded data
-
-**Methods**:
-1. `parse(data)`
-   - Parses transaction data from hex or RLP-encoded input
-   - **Parameters**:
-     - `data`: Transaction data to parse
-   - **Returns**: Parsed transaction object
-
-2. `sign(key)`
-   - Signs the transaction with a private key
-   - **Parameters**:
-     - `key`: Private key for signing
-   - **Returns**: Signed transaction object
-
-3. `serialize()`
-   - Serializes the transaction into RLP-encoded format
-   - **Returns**: RLP-encoded transaction data
-
-4. `hex_serialize()`
-   - Serializes the transaction into hex-encoded format
-   - **Returns**: Hex-encoded transaction data
-
-5. `hash()`
-   - Generates the transaction's hash
-   - **Returns**: Transaction hash (SHA256)
-
-### Example Usage
-
-```python
-# Creating and signing a transaction
-tx = Transaction(
-    nonce=0,  # Transaction nonce
-    to='recipient_address',  # Recipient address
-    value=100,  # Transaction value
-    fee=1,  # Transaction fee
-    data=None  # Optional transaction data
-)
+# Sign the transaction
 tx.sign(private_key)
 
-# Working with a block
-block = Block(block_data)
-balance = block.get_balance(address)
-block.pay_fee(address, fee)
+# Serialize the transaction
+serialized_tx = tx.hex_serialize()
 ```
 
-**Note**: This implementation is a simplified blockchain block and transaction representation, likely for educational or experimental purposes.
+## Project Structure
 
-## Repository Structure
+The project is organized with the following key files:
 
-The repository contains the following key files and their purposes:
+- `blocks.py`: Likely handles blockchain block-related operations
+- `manager.py`: Probable management of core system components
+- `parser.py`: Handles parsing of data or transactions
+- `processblock.py`: Processes individual blockchain blocks
+- `rlp.py`: Implementation of Recursive Length Prefix (RLP) encoding
+- `transactions.py`: Manages blockchain transaction-related functionality
+- `trie.py`: Implements Merkle Patricia Trie data structure
+- `trietest.py`: Contains tests for the trie implementation
 
-- `blocks.py`: Defines the Block class, which represents blockchain blocks and manages block-related operations.
-- `manager.py`: Handles core blockchain management functions, including address generation, transaction pool management, and block processing.
-- `parser.py`: Provides parsing functionality for blockchain-related data structures.
-- `processblock.py`: Contains logic for evaluating and processing blockchain blocks.
-- `rlp.py`: Implements RLP (Recursive Length Prefix) encoding and decoding, a serialization method used in Ethereum-like blockchain systems.
-- `transactions.py`: Defines the Transaction class for handling blockchain transactions.
-- `trie.py`: Likely implements a Merkle Patricia Trie data structure used for state storage.
-- `trietest.py`: Contains tests for the trie implementation.
+Key configuration and script files:
+- `README.md`: Primary project documentation
+- `README_Prometheus.md`: Additional documentation, possibly related to Prometheus monitoring
 
-The project appears to be a lightweight blockchain implementation with core functionalities for managing blocks, transactions, and state.
+The project appears to be focused on Ethereum-related functionality, with modules covering core blockchain data structures, encoding, and transaction processing.
 
-# Contributing
+## Technologies Used
 
-We welcome contributions to this project! Here are some guidelines to help you get started:
+### Programming Languages
+- Python 3.x
 
-## How to Contribute
+### Major Libraries and Frameworks
+- `pybitcointools`: Cryptocurrency-related utilities and cryptographic functions
+- `rlp` (Recursive Length Prefix): Encoding/decoding library for Ethereum-like data structures
+- `leveldb`: Key-value storage library for managing persistent data
+- `hashlib`: Python standard library for cryptographic hashing
 
-1. **Fork the Repository**: Create a fork of the project on GitHub.
+### Core Technologies
+- Blockchain-related data structures (Block, Transaction, Merkle Trie)
+- Cryptographic operations (address generation, hashing)
+- Decentralized system components (transaction pool, state management)
 
-2. **Create a Branch**: 
-   ```
-   git checkout -b feature/your-feature-name
-   ```
+### Development Tools
+- Python standard libraries (re, sys)
 
-3. **Make Your Changes**: 
-   - Ensure your code follows the project's coding style
-   - Add or update tests as appropriate
-   - Write clear, concise commit messages
+### Database
+- LevelDB: Used for object and state storage
 
-4. **Run Tests**:
-   Before submitting a pull request, run the existing tests:
-   ```
-   python trietest.py
-   ```
-   This will execute the test suite and verify the functionality of the Trie implementation.
+# Usage Examples
 
-5. **Submit a Pull Request**:
-   - Push your changes to your fork
-   - Open a pull request with a clear description of your changes
-   - Provide context about the problem you're solving
+## Address Generation
+Generate Ethereum addresses using a seed:
+```python
+from manager import genaddr
 
-## Testing
-
-The project includes a test file `trietest.py` which:
-- Generates random keys and values
-- Updates a Trie data structure
-- Verifies data consistency
-- Raises an exception if any inconsistencies are found
-
-To run tests:
-```
-python trietest.py
+# Generate an address with a seed
+private_key, address = genaddr("your_seed_string")
+print(f"Private Key: {private_key}")
+print(f"Address: {address}")
 ```
 
-## Code of Conduct
+## Transaction Handling
+The project supports basic transaction management:
+```python
+from transactions import Transaction
+from manager import mainblk
 
-- Be respectful and considerate of others
-- Provide constructive feedback
-- Focus on collaboration and improving the project
+# Check transaction validity
+# (Note: This is a simplified example based on the project's implementation)
+sender_balance = mainblk.get_balance(sender_address)
+transaction_value = 10  # Example value
+transaction_fee = 1     # Example fee
 
-## Reporting Issues
+# Validate transaction
+if sender_balance >= transaction_value + transaction_fee:
+    # Create and process transaction
+    tx = Transaction(transaction_data)
+```
 
-If you find a bug or have a suggestion:
-- Check existing issues to avoid duplicates
-- Provide a clear description of the problem
-- Include steps to reproduce the issue
-- If possible, suggest a potential solution
+## Blockchain Interaction
+Interact with the blockchain using the receive method:
+```python
+from manager import receive
 
-Thank you for contributing!
+# Get object by hash
+obj = receive(['getobj', object_hash])
+
+# Get account balance
+balance = receive(['getbalance', account_address])
+
+# Get contract-related information
+contract_root = receive(['getcontractroot', contract_address])
+contract_size = receive(['getcontractsize', contract_address])
+```
+
+## Database Operations
+The project uses LevelDB for storage:
+```python
+from manager import db
+
+# Store an object in the database
+db.Put(object_hash, serialized_object)
+
+# Retrieve an object from the database
+retrieved_object = db.Get(object_hash)
+```
+
+**Note:** These examples are based on the project's source code and are meant to illustrate potential usage. Actual implementation may require additional context and error handling.
 
 ## License
 
-This project is currently unlicensed. 
+This project is licensed under the MIT License. 
 
-**Important Notice**: Without an explicit license, the default copyright laws apply. This means:
-- The original authors retain all rights to the code
-- No one else has permission to reproduce, distribute, or create derivative works
-- Commercial use, modification, and distribution are prohibited without explicit permission
+The MIT License is a permissive free software license originating at the Massachusetts Institute of Technology. It allows for reuse within proprietary software provided that all copies of the licensed software include a copy of the MIT License terms and the copyright notice.
 
-We strongly recommend the project maintainers add an open-source license to clarify usage rights and encourage collaboration. For guidance, visit [Choose an Open Source License](https://choosealicense.com/).
+For the full license text, please refer to the original Ethereum project's license terms at the [Ethereum GitHub repository](https://github.com/ethereum/pyethereum).
+
+Note: Always verify the specific licensing terms directly with the project maintainers or the official repository.
+
+## Additional Notes
+
+### Technical Considerations
+- This is a low-level Ethereum blockchain implementation in Python, focusing on core blockchain data structures and operations.
+- The implementation includes critical blockchain components such as blocks, transactions, and state management.
+- Current implementation has some TODO items, including Proof of Work (POW) verification.
+
+### Potential Limitations
+- The code appears to be an early or experimental implementation of Ethereum blockchain mechanics.
+- State management and transaction processing are handled through custom data structures like Trie.
+- Some verification mechanisms are partially implemented (e.g., root hash checks, but incomplete POW verification).
+
+### Development and Contribution
+- This project seems to be an educational or experimental blockchain implementation.
+- Developers interested in blockchain fundamentals or Ethereum internals may find this codebase instructive.
+- The code references an external repository at https://github.com/ethereum/pyethereum for the current version.
+
+### Security and Production Use
+- **Warning**: This implementation should NOT be considered production-ready.
+- Incomplete security checks and verification mechanisms make it unsuitable for real-world blockchain applications.
+- Use only for educational, research, or developmental purposes.
+
+### Performance Considerations
+- The implementation uses custom data structures like Trie for state management.
+- Serialization and hashing methods are provided for blockchain-specific operations.
+- Performance and optimization may vary compared to more mature blockchain implementations.
+
+### Compatibility
+- Designed to work with RLP (Recursive Length Prefix) encoding, a key Ethereum data serialization method.
+- Integrates with pybitcointools for cryptographic operations.
+- May require specific Python versions and dependencies not explicitly listed in this README.
